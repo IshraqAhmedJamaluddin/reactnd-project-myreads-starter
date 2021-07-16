@@ -7,13 +7,11 @@ class Book extends Component {
     };
 
     changeShelf = (event) => {
-        this.setState({shelf: event.target.value});
+        this.setState({shelf: event.target.value}, () => {
+          this.update()
+        });
     }
     
-    componentDidUpdate() {
-        this.update()
-    }
-
     update() {
         this.props.updateShelf(this.props.book, this.state.shelf)
     }
