@@ -3,15 +3,16 @@ import React, { Component } from"react";
 class Book extends Component {
 
     state = {
-        shelf: this.props.book.shelf
+        shelf: this.props.book.shelf? this.props.book.shelf: "none"
     };
+    books = []
 
     changeShelf = (event) => {
         this.setState({shelf: event.target.value}, () => {
           this.update()
         });
     }
-    
+
     update() {
         this.props.updateShelf(this.props.book, this.state.shelf)
     }

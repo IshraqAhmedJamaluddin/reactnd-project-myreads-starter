@@ -7,6 +7,10 @@ import * as BooksAPI from './BooksAPI'
 import Search from './Search'
 
 class BooksApp extends React.Component {
+  constructor(props) {
+    super(props)
+    this.updateShelf = this.updateShelf.bind(this)
+  }
   state = {
     books: [],
     currentlyReading: [],
@@ -16,18 +20,20 @@ class BooksApp extends React.Component {
   
   componentDidMount() {
     BooksAPI.getAll()
-    .then(books => { this.books = books })
+    .then(newBooks => { this.setState({books: newBooks}) })
     .then(()=>{
-      this.setState({
-        currentlyReading: this.books.filter((book) => book.shelf === 'currentlyReading'),
-        wantToRead: this.books.filter((book) => book.shelf === 'wantToRead'),
-        read: this.books.filter((book) => book.shelf === 'read')
-      })
+      this.setState((currentState) =>({
+        currentlyReading: currentState.books.filter((book) => book.shelf === 'currentlyReading'),
+        wantToRead: currentState.books.filter((book) => book.shelf === 'wantToRead'),
+        read: currentState.books.filter((book) => book.shelf === 'read')
+      }))
     })
   }
-  updateShelf(book, shelf) {
-    BooksAPI.update(book, shelf)
-    .then(books => window.location.reload())
+  updateShelf(newbook, shelf) {
+    BooksAPI.update(newbook, shelf)
+    .then(res => {
+      this.componentDidMount()
+    })
   }
 
   render() {

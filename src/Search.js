@@ -4,19 +4,41 @@ import * as BooksAPI from './BooksAPI'
 import Book from './Book'
 
 class Search extends Component {
+
     state={
         query: "",
         books: []
     }
 
+    oldBooks = []
+    newBooks = []
+
     queryChange = (event) => {
         event.preventDefault()
         this.setState({query: event.target.value}, () => {
             if (this.state.query) {
+                BooksAPI.getAll()
+                .then((books) => {
+                    this.oldBooks = books
+                })
                 BooksAPI.search(this.state.query.trim())
                 .then((books) => {
                     if (books.length) {
-                        this.setState({books: books})
+                        this.newBooks = []
+                        books.forEach((book) => {
+                            let isFound = false
+                            this.oldBooks.forEach((b) => {
+                                if (book.id === b.id) {
+                                    this.newBooks.push(b)
+                                    isFound = true
+                                }
+                            })
+                            if (!isFound) {
+                                this.newBooks.push(book)
+                            }
+                        });
+                        console.log(this.newBooks)
+                        this.setState({books: this.newBooks})
                     } else {
                         this.setState({books: []})
                     }
